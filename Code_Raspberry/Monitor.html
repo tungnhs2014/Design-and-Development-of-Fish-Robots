@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mechatronics Project</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" charset="utf-8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="shortcut icon" href="Picture/icon.jpg">
+  </head>
+  <body>
+
+    <input type="checkbox" id="check">
+    <!--header area start-->
+    <header>
+      <label for="check">
+        <i class="fas fa-bars" id="sidebar_btn"></i>
+      </label>
+      <div class="left_area">
+        <h3 style="margin-left: 30px;">Robot <span>Fish</span></h3>
+      </div>
+    </header>
+    <!--header area end-->
+    <!--sidebar start-->
+    <div class="sidebar">
+      <div class="profile_info">
+        <img src="Picture/fish.gif" href="Information.html" class="profile_image" alt="">
+        <h4>NTV Team</h4>
+      </div>
+      <a href="Information.html"><i class="fas fa-desktop"></i><span>Information</span></a>
+      <a href="Control.html"><i class="fas fa-sliders-h"></i><span>Control</span></a>
+      <a href="Monitor.html" style="background-color: #19B3D3"><i class="fas fa-table"></i><span>Monitor</span></a>
+    </div>
+    <!--sidebar end-->
+    <!--card layout start-->
+    <div class="container">
+      <div class="row">
+        <div class="card-03">
+          <div class="card-body">
+            <h4 class="card-title">Temperature, Humidity and Deep Chart</h4>
+            <canvas id="lineChart_1" width="520" height="310"></canvas>
+          </div>
+        </div>
+      
+      </div>
+      <div class="row">
+        <div class="card-04">
+          <div class="card-body">
+            <h4 class="card-title" style="margin-left: 80px;">Temperature, Humidity and Deep Table</h4>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>Temperature</th>
+                    <th>Humidity</th>
+                    <th>Deep</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td id="time[0]"></td>
+                    <td id="temp[0]"></td>
+                    <td id="humid[0]"></td>
+                    <td id="deep[0]"></td>
+                  </tr>
+                  <tr>
+                    <td id="time[1]"></td>
+                    <td id="temp[1]"></td>
+                    <td id="humid[1]"></td>
+                    <td id="deep[1]"></td>
+                  </tr>
+                  <tr>
+                    <td id="time[2]"></td>
+                    <td id="temp[2]"></td>
+                    <td id="humid[2]"></td>
+                    <td id="deep[2]"></td>
+                  </tr>
+                  <tr>
+                    <td id="time[3]"></td>
+                    <td id="temp[3]"></td>
+                    <td id="humid[3]"></td>
+                    <td id="deep[3]"></td>
+                  </tr>
+                  <tr>
+                    <td id="time[4]"></td>
+                    <td id="temp[4]"></td>
+                    <td id="humid[4]"></td>
+                    <td id="deep[4]"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div> 
+      </div>
+    </div>
+    <!--card layout end-->
+
+    <script>
+      Chart.defaults.font.size = 16;
+      var time = [];
+      var daytime = [];
+      var temp = [];
+      var humid = [];
+      var deep = [];
+      const chartdata_1 = {
+        labels: time,
+            datasets: [{
+                label: 'Temperature',
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: temp
+              },
+			  
+              {
+                label: 'Humidity',
+                backgroundColor: 'rgb(43, 99, 255)',
+                borderColor: 'rgb(43, 99, 255)',
+                data: humid
+             },
+			 
+             {
+                label: 'Deep',
+                backgroundColor: 'rgb(132, 99, 255)',
+                borderColor: 'rgb(132, 99, 255)',
+                data: deep
+             }
+          ]
+      };
+
+      const config = {
+        type: 'line',
+        data: chartdata_1,
+        options: {
+            animation: false,
+            scales: {
+              y: {
+                suggestedMin: 0,
+                suggestedMax: 100
+              }
+            }
+        }
+      };
+      var lineChart_1 = new Chart(
+          document.getElementById('lineChart_1'),
+          config
+      );
+
+      // load data tu database
+      $(document).ready(function(){
+          updateChart();
+      });
+      setInterval(updateChart,2000);
+	  
+      function updateChart(){
+          // gui request xuong database de lay data
+          $.post('readData.php',function(data){
+              var time = [];
+              var temp = [];
+              var humid = [];
+              var deep = [];
+              var daytime = [];
+              // cap nhat database vao bien tam
+              for(var i in data){
+                  time.push(data[i].update_only_time);
+                  daytime.push(data[i].update_time);
+                  temp.push(data[i].temperature);
+                  humid.push(data[i].humidity);
+                  deep.push(data[i].deep);
+              }
+              // cap nhat database cho table 
+              for (var i=0; i<5; i++){
+                document.getElementById("time["+i+"]").innerHTML = daytime[i];
+                document.getElementById("temp["+i+"]").innerHTML = temp[i];
+                document.getElementById("humid["+i+"]").innerHTML = humid[i];
+                document.getElementById("deep["+i+"]").innerHTML = deep[i];
+              }
+               //console.log(time);
+              // cap nhat databaase cho chart
+              lineChart_1.data.labels = time;
+              lineChart_1.data.datasets[0].data = temp;
+              lineChart_1.data.datasets[1].data = humid;
+              lineChart_1.data.datasets[2].data = deep;
+              lineChart_1.update();
+                
+              
+          })
+        }
+    
+        
+        
+    </script>
+  </body>
+</html>

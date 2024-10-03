@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+
+
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mechatronics Project</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" charset="utf-8"></script>
+    <link rel="shortcut icon" href="Picture/icon.jpg">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+  </head>
+  <body>
+
+    <input type="checkbox" id="check">
+    <!--header area start-->
+    <header>
+      <label for="check">
+        <i class="fas fa-bars" id="sidebar_btn"></i>
+      </label>
+      <div class="left_area">
+        <h3 style="margin-left: 30px;">Robot <span>Fish</span></h3>
+      </div>
+    </header>
+    <!--header area end-->
+    <!--sidebar start-->
+    <div class="sidebar">
+      <div class="profile_info">
+        <img src="Picture/fish.gif" href="Information.html" class="profile_image" alt="">
+        <h4>NTV Team</h4>
+      </div>
+      <a href="Information.html"><i class="fas fa-desktop"></i><span>Information</span></a>
+      <a href="Control.html"  style="background-color: #19B3D3"><i class="fas fa-sliders-h"></i><span>Control</span></a>
+      <a href="Monitor.html"><i class="fas fa-table"></i><span>Monitor</span></a>
+    </div>
+    <!--sidebar end-->
+    <!--card layout start-->
+    
+    <div class="container">
+      <div class="row">
+        <div class="card-01">
+          <form action="" id="form" class ="auto" method="POST">
+            <h2>AUTO</h2>
+            <div class="btn-group">
+             <p>Mode: <button type="button" class="button-1" id="on">ON</button> <button type="button" class="button-2" id="off">OFF</button></p> 
+            </div>
+             <p>Time:<input type="time" class="time1" name="time1"> to<input type="time" class="time2" name="time2"></p>
+            <br>
+            <input type="submit" class="caidat1" name ="Setup" value="Setup">
+          </form>
+        </div>
+        <div class="card-07 ">
+          <img src="http://localhost:8080/?action=stream" />
+        </div>
+        <div class="card-06">
+          <form action="" class ="manual">
+            <h2>MANUAL</h2>
+            <p> <button type="button" class="button button2 bt1" id="clickF">UP</button><br>
+                <button type="button" class="button button2 bt2" id="clickL">LEFT</button>
+                <button type="button" class="button button2 bt3" id="clickR">RIGHT</button><br>
+                <button type="button" class="button button2 bt4" id="clickB">BACK</button></p>
+            <br>
+          </form>
+        </div>
+      </div>
+      <div class="row">
+        <div class="card-05" style="height: 220px;">
+          <div class="card-body">
+            <h4 class="card-title" style="margin-left: 80px;">Time setting</h4>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Turn on</th>
+                    <th>Turn off</th>
+                    
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Robot Fish</td>
+                    <td id="td1"></td>
+                    <td id="td2"></td>
+                  </tr>                
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <!--card layout end-->
+	
+	
+    <script>
+
+      $(document).ready(function(){
+        //code xu ly form
+        $(document).on('submit','#form', function(){
+          $.post("updateData.php",$('#form').serialize());
+        });
+		updateTable();
+      });
+      setInterval(updateTable,100);
+      function updateTable(){
+        $.post("getData.php",
+        function(data){
+          var td1=data[0].ontime;
+          var td2=data[0].offtime;
+          document.getElementById("td1").innerHTML=td1;
+          document.getElementById("td2").innerHTML=td2;
+		  
+		
+        })
+      }
+
+    </script>
+	
+	  <script type="text/javascript">
+		$('#on').click(function(){     //id của button on nhé :D
+		 var a = new XMLHttpRequest();
+		 a.open("GET", "on.php");
+		 a.onreadystatechange=function(){
+		  if(a.readyState==4){
+		   if(a.status == 200){
+		   }
+		   else{
+		   alert("Error")
+		   }
+		  }
+		 }
+		 a.send();
+		});
+
+		$('#off').click(function(){     //id của button off nhé :D
+		 var a = new XMLHttpRequest();
+		 a.open("GET", "off.php");
+		 a.onreadystatechange=function(){
+		  if(a.readyState==4){
+		   if(a.status == 200){
+		   }
+		   else{
+		   alert("Error")
+		   }
+		  }
+		 }
+		 a.send();
+		});
+
+		$(document).ready(function(){
+		$('#clickF').mousedown(function(){    // "clickF" cái id ở trên. Khi click vào nút tiến thì hàm này sẽ hoạt động.
+		  var a = new XMLHttpRequest();   
+		  a.open("GET", "up.php");        // File php mình muốn gọi ngầm     
+		  a.onreadystatechange=function(){ 
+		  if(a.readyState==4){
+			if(a.status == 200){
+			}
+			else{
+			alert("Error")
+			}
+		  }
+		  }
+		  a.send();
+		});
+		$('#clickF').mouseup(function(){    // Chỉ cần thả chuột ra là Robot dừng
+		  var a = new XMLHttpRequest();
+		  a.open("GET", "stop.php");
+		  a.onreadystatechange=function(){
+		  if(a.readyState==4){
+			if(a.status == 200){
+			}
+			else{
+			alert("Error")
+			}
+		  }
+		  }
+		  a.send();
+		});
+	  });  
+
+	  $(document).ready(function(){
+		$('#clickL').mousedown(function(){    // "clickF" cái id ở trên. Khi click vào nút tiến thì hàm này sẽ hoạt động.
+		  var a = new XMLHttpRequest();   
+		  a.open("GET", "left.php");        // File php mình muốn gọi ngầm     
+		  a.onreadystatechange=function(){ 
+		  if(a.readyState==4){
+			if(a.status == 200){
+			}
+			else{
+			alert("Error")
+			}
+		  }
+		  }
+		  a.send();
+		});
+		$('#clickL').mouseup(function(){    // Chỉ cần thả chuột ra là Robot dừng
+		  var a = new XMLHttpRequest();
+		  a.open("GET", "stop.php");
+		  a.onreadystatechange=function(){
+		  if(a.readyState==4){
+			if(a.status == 200){
+			}
+			else{
+			alert("Error")
+			}
+		  }
+		  }
+		  a.send();
+		});
+	  });  
+
+
+	  $(document).ready(function(){
+		$('#clickR').mousedown(function(){    // "clickF" cái id ở trên. Khi click vào nút tiến thì hàm này sẽ hoạt động.
+		  var a = new XMLHttpRequest();   
+		  a.open("GET", "right.php");        // File php mình muốn gọi ngầm     
+		  a.onreadystatechange=function(){ 
+		  if(a.readyState==4){
+			if(a.status == 200){
+			}
+			else{
+			alert("Error")
+			}
+		  }
+		  }
+		  a.send();
+		});
+		$('#clickR').mouseup(function(){    // Chỉ cần thả chuột ra là Robot dừng
+		  var a = new XMLHttpRequest();
+		  a.open("GET", "stop.php");
+		  a.onreadystatechange=function(){
+		  if(a.readyState==4){
+			if(a.status == 200){
+			}
+			else{
+			alert("Error")
+			}
+		  }
+		  }
+		  a.send();
+		});
+	  });  
+
+	  $(document).ready(function(){
+		$('#clickB').mousedown(function(){    // "clickF" cái id ở trên. Khi click vào nút tiến thì hàm này sẽ hoạt động.
+		  var a = new XMLHttpRequest();   
+		  a.open("GET", "back.php");        // File php mình muốn gọi ngầm     
+		  a.onreadystatechange=function(){ 
+		  if(a.readyState==4){
+			if(a.status == 200){
+			}
+			else{
+			alert("Error")
+			}
+		  }
+		  }
+		  a.send();
+		});
+		
+		$('#clickB').mouseup(function(){    // Chỉ cần thả chuột ra là Robot dừng
+		  var a = new XMLHttpRequest();
+		  a.open("GET", "stop.php");
+		  a.onreadystatechange=function(){
+		  if(a.readyState==4){
+			if(a.status == 200){
+			}
+			else{
+			alert("Error")
+			}
+		  }
+		  }
+		  a.send();
+		});
+		
+		
+	  });  
+		  
+	  </script>
+
+	
+  </body>
+</html>
+      
+	  
